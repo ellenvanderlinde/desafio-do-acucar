@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desafio do Açúcar</title>
+<style>
+:root{--blue:#0757a6;--blue2:#0b6dcc;--green:#19a463;--yellow:#ffd75a;--red:#e34b4b;--bg:#f4f8fc;--card:#fff;--text:#17324d;--muted:#64778a;--line:#dce6ef}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#edf7ff,#fff9e9);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text)}
+.app{max-width:760px;margin:auto;min-height:100vh;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.brand{font-weight:900;font-size:21px;color:var(--blue)}.progress{font-size:13px;color:var(--muted);background:white;border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+.screen{display:none}.screen.active{display:block}.hero{text-align:center;padding:25px 8px}.hero .emoji{font-size:70px}.hero h1{font-size:40px;line-height:1;margin:8px 0;color:var(--blue)}.hero p{color:var(--muted);max-width:520px;margin:12px auto 22px}
+.btn{border:0;border-radius:16px;background:var(--blue);color:white;font-weight:800;padding:13px 20px;cursor:pointer;font-size:16px;min-height:48px}.btn.secondary{background:white;color:var(--blue);border:2px solid var(--blue)}.btn.green{background:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 6px 22px rgba(40,80,120,.06);margin:12px 0}
+h2{margin:8px 0}.muted{color:var(--muted);font-size:14px}.meal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.meal{padding:15px;border:2px solid var(--line);background:white;border-radius:16px;cursor:pointer;text-align:left;font-weight:800}.meal.selected{border-color:var(--blue);background:#edf6ff}.meal span{font-size:25px;display:block;margin-bottom:6px}
+.filters{display:flex;gap:7px;overflow:auto;padding:3px 0 8px}.filter{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:999px;padding:8px 12px;cursor:pointer}.filter.on{background:var(--blue);color:white;border-color:var(--blue)}
+.foodgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.food{background:white;border:1px solid var(--line);border-radius:15px;padding:11px;cursor:pointer;text-align:left;min-height:105px}.food:hover{border-color:var(--blue)}.food .pic{font-size:30px}.food b{font-size:14px}.food small{display:block;color:var(--muted);margin-top:4px}.selected-list{display:flex;flex-wrap:wrap;gap:7px}.chip{border-radius:999px;background:#eef5fb;padding:7px 10px;font-size:12px}
+.result{text-align:center}.ring{width:190px;height:190px;border-radius:50%;margin:18px auto;background:conic-gradient(var(--green) var(--pct),#e8eef3 0);display:grid;place-items:center}.ring>div{width:145px;height:145px;border-radius:50%;background:white;display:grid;place-items:center}.big{font-size:38px;font-weight:900;color:var(--blue)}
+.rank{display:flex;align-items:center;gap:10px;margin:10px 0}.rankbar{height:10px;border-radius:99px;background:#e9eef2;flex:1;overflow:hidden}.rankbar i{display:block;height:100%;background:var(--red)}
+.swap{display:grid;grid-template-columns:1fr 45px 1fr;align-items:center;gap:8px}.swapbox{border:1px solid var(--line);border-radius:15px;padding:12px;background:white}.swapbox b{display:block}.success{background:#eaf8f0;border:1px solid #bde6ce;padding:14px;border-radius:16px;color:#14683f;font-weight:700}
+.footer{display:flex;justify-content:space-between;gap:10px;margin-top:14px}.footer .btn{flex:1}
+@media(max-width:480px){.hero h1{font-size:34px}.meal-grid,.foodgrid{grid-template-columns:1fr 1fr}.swap{grid-template-columns:1fr}.swap>div:nth-child(2){text-align:center}.top{position:sticky;top:0;background:rgba(244,248,252,.92);padding:6px 0;z-index:2}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><div class="brand">🍬 Desafio do Açúcar</div><div class="progress" id="progress">1/5</div></div>
+
+<section id="s1" class="screen active">
+<div class="hero"><div class="emoji">🍎🥤🍫</div><h1>Desafio do Açúcar</h1><p>Monte um dia de alimentação, descubra quanto açúcar aparece nas suas escolhas e tente melhorar seu resultado.</p><button class="btn" onclick="go(2)">Começar o desafio →</button></div>
+<div class="card"><b>🎯 O objetivo</b><p class="muted">Aprender a observar bebidas e alimentos açucarados, interpretar escolhas e perceber como pequenas trocas podem mudar o resultado.</p></div>
+</section>
+
+<section id="s2" class="screen">
+<div class="card"><h2>1. Escolha a refeição</h2><p class="muted">Você poderá voltar e adicionar alimentos em outras refeições.</p>
+<div class="meal-grid" id="meals"></div></div>
+<div class="footer"><button class="btn secondary" onclick="go(1)">Voltar</button><button class="btn" id="mealNext" disabled onclick="go(3)">Continuar →</button></div>
+</section>
+
+<section id="s3" class="screen">
+<div class="card"><h2 id="mealTitle">2. Escolha os alimentos</h2><p class="muted">Toque em todos os alimentos que você consumiria nessa refeição. Os valores são aproximados e servem para fins educativos.</p>
+<div class="filters" id="filters"></div><div class="foodgrid" id="foodgrid"></div></div>
+<div class="card"><b>Suas escolhas nesta refeição</b><div class="selected-list" id="chips" style="margin-top:8px"></div></div>
+<div class="footer"><button class="btn secondary" onclick="go(2)">← Refeição</button><button class="btn" onclick="go(4)">Ver meu resultado →</button></div>
+</section>
+
+<section id="s4" class="screen">
+<div class="result card"><h2>Seu dia até agora</h2><div class="ring" id="ring"><div><div><div class="big" id="total">0 g</div><div class="muted" id="spoons">0 colheres de chá</div></div></div></div><p id="resultMsg"></p></div>
+<div class="card"><h3>🔎 O que mais contribuiu?</h3><div id="ranking"></div></div>
+<div class="footer"><button class="btn secondary" onclick="go(3)">← Alterar escolhas</button><button class="btn green" onclick="go(5)">Desafio de trocas →</button></div>
+</section>
+
+<section id="s5" class="screen">
+<div class="card"><h2>🎯 Desafio: Troque e compare</h2><p class="muted">Escolha uma troca. O jogo recalcula o total usando valores educativos aproximados.</p><div id="swaps"></div></div>
+<div class="card" id="swapResult"><h3>Seu resultado</h3><div class="big" id="after">0 g</div><p class="muted" id="saving"></p></div>
+<div class="success">💡 A ideia não é “proibir” alimentos. É perceber quais escolhas têm mais açúcar e conhecer alternativas para fazer escolhas conscientes.</div>
+<div class="footer"><button class="btn secondary" onclick="go(4)">← Resultado</button><button class="btn green" onclick="restart()">Jogar novamente</button></div>
+</section>
+</div>
+
+<script>
+const foods=[
+{cat:'Bebidas',e:'🥤',n:'Refrigerante comum',g:35,p:'1 lata (350 ml)'},{cat:'Bebidas',e:'🧃',n:'Suco de caixinha',g:20,p:'1 copo (200 ml)'},{cat:'Bebidas',e:'🥤',n:'Refrigerante zero',g:0,p:'1 lata'},{cat:'Bebidas',e:'🧋',n:'Chá gelado adoçado',g:18,p:'1 copo'},{cat:'Bebidas',e:'⚡',n:'Energético',g:27,p:'1 lata'},{cat:'Bebidas',e:'☕',n:'Café com açúcar',g:10,p:'1 xícara + 2 colheres'},{cat:'Bebidas',e:'☕',n:'Café sem açúcar',g:0,p:'1 xícara'},{cat:'Bebidas',e:'🥛',n:'Achocolatado',g:16,p:'1 copo'},{cat:'Bebidas',e:'🥛',n:'Leite integral',g:10,p:'1 copo*'},{cat:'Bebidas',e:'🍊',n:'Suco de laranja natural',g:18,p:'1 copo*'},
+{cat:'Café da manhã',e:'🥣',n:'Cereal açucarado',g:10,p:'1 porção'},{cat:'Café da manhã',e:'🥛',n:'Iogurte saborizado',g:15,p:'1 pote'},{cat:'Café da manhã',e:'🥐',n:'Croissant',g:5,p:'1 unidade'},{cat:'Café da manhã',e:'🍞',n:'Pão francês',g:2,p:'1 unidade*'},{cat:'Café da manhã',e:'🍞',n:'Pão de forma',g:2,p:'2 fatias*'},{cat:'Café da manhã',e:'🍞',n:'Pão de queijo',g:1,p:'3 unidades*'},{cat:'Café da manhã',e:'🥞',n:'Panqueca com calda',g:12,p:'2 unidades'},{cat:'Café da manhã',e:'🍯',n:'Mel',g:17,p:'1 colher de sopa'},{cat:'Café da manhã',e:'🧀',n:'Queijo',g:0,p:'1 fatia*'},{cat:'Café da manhã',e:'🥚',n:'Ovo mexido',g:0,p:'1 unidade*'},{cat:'Café da manhã',e:'🥑',n:'Abacate',g:0,p:'1/2 unidade*'},{cat:'Café da manhã',e:'🥖',n:'Tapioca com queijo',g:1,p:'1 unidade*'},{cat:'Café da manhã',e:'🌽',n:'Cuscuz',g:1,p:'1 porção*'},{cat:'Café da manhã',e:'🥛',n:'Vitamina de banana sem açúcar',g:14,p:'1 copo*'}, 
+{cat:'Lanches',e:'🍪',n:'Biscoito recheado',g:12,p:'3 unidades'},{cat:'Lanches',e:'🍪',n:'Biscoito doce',g:8,p:'4 unidades'},{cat:'Lanches',e:'🍫',n:'Chocolate',g:18,p:'1 barra pequena'},{cat:'Lanches',e:'🍩',n:'Donut',g:20,p:'1 unidade'},{cat:'Lanches',e:'🧁',n:'Cupcake',g:22,p:'1 unidade'},{cat:'Lanches',e:'🍰',n:'Fatia de bolo',g:18,p:'1 fatia'},{cat:'Lanches',e:'🍬',n:'Balas',g:10,p:'5 unidades'},{cat:'Lanches',e:'🍭',n:'Pirulito',g:8,p:'1 unidade'},{cat:'Lanches',e:'🍦',n:'Sorvete',g:15,p:'2 bolas'},{cat:'Lanches',e:'🍿',n:'Pipoca caramelizada',g:14,p:'1 porção'},{cat:'Lanches',e:'🥜',n:'Pasta de amendoim adoçada',g:4,p:'1 colher de sopa'},
+{cat:'Frutas',e:'🍌',n:'Banana',g:14,p:'1 unidade*'},{cat:'Frutas',e:'🍎',n:'Maçã',g:19,p:'1 unidade*'},{cat:'Frutas',e:'🍊',n:'Laranja',g:12,p:'1 unidade*'},{cat:'Frutas',e:'🍇',n:'Uva',g:16,p:'1 cacho pequeno*'},{cat:'Frutas',e:'🍉',n:'Melancia',g:17,p:'2 fatias*'},{cat:'Frutas',e:'🍓',n:'Morangos',g:5,p:'1 xícara*'},{cat:'Frutas',e:'🥭',n:'Manga',g:23,p:'1/2 unidade*'},{cat:'Frutas',e:'🍍',n:'Abacaxi',g:10,p:'2 fatias*'},
+{cat:'Almoço/Jantar',e:'🍅',n:'Ketchup',g:4,p:'1 colher de sopa'},{cat:'Almoço/Jantar',e:'🍚',n:'Arroz',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🫘',n:'Feijão',g:0,p:'1 concha*'},{cat:'Almoço/Jantar',e:'🥩',n:'Carne bovina grelhada',g:0,p:'1 bife*'},{cat:'Almoço/Jantar',e:'🍗',n:'Frango grelhado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🐟',n:'Peixe assado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🥚',n:'Ovo cozido',g:0,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🥗',n:'Salada sem molho pronto',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥦',n:'Brócolis',g:1,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥕',n:'Legumes cozidos',g:4,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍠',n:'Batata-doce',g:7,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥔',n:'Purê de batata',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍝',n:'Macarrão ao molho',g:5,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🍲',n:'Sopa de legumes',g:4,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🥘',n:'Escondidinho de carne',g:4,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍛',n:'Strogonoff',g:5,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥞',n:'Panqueca de carne',g:4,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🌮',n:'Taco',g:3,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🍔',n:'Hambúrguer',g:6,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍕',n:'Pizza',g:3,p:'2 fatias*'},{cat:'Almoço/Jantar',e:'🥪',n:'Sanduíche natural',g:3,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍟',n:'Batata frita',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🌭',n:'Cachorro-quente',g:8,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🥣',n:'Farofa',g:1,p:'2 colheres*'},
+{cat:'Sobremesas',e:'🍮',n:'Pudim',g:20,p:'1 fatia'},{cat:'Sobremesas',e:'🍨',n:'Açaí com xarope',g:30,p:'1 tigela pequena'},{cat:'Sobremesas',e:'🍫',n:'Brigadeiro',g:8,p:'1 unidade'},{cat:'Sobremesas',e:'🍪',n:'Cookie com gotas de chocolate',g:12,p:'1 unidade'},{cat:'Sobremesas',e:'🍓',n:'Iogurte natural + fruta',g:8,p:'1 pote + fruta*'}
+];
+const meals=[['☕','Café da manhã'],['🍎','Lanche da manhã'],['🍽️','Almoço'],['🍪','Lanche da tarde'],['🌙','Jantar'],['🍨','Ceia / sobremesa']];
+let currentMeal='', selected=[], total=0, swapsApplied=[];
+function $(id){return document.getElementById(id)}
+function go(n){
+ document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('s'+n).classList.add('active');$('progress').textContent=n+'/5';
+ if(n===2)renderMeals(); if(n===3)renderFoods(); if(n===4)renderResult(); if(n===5)renderSwaps(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderMeals(){
+ $('meals').innerHTML=meals.map(m=>`<button class="meal ${currentMeal===m[1]?'selected':''}" onclick="selectMeal('${m[1]}')"><span>${m[0]}</span>${m[1]}</button>`).join('');
+}
+function selectMeal(m){currentMeal=m;$('mealNext').disabled=false;renderMeals()}
+function renderFoods(){
+ $('mealTitle').textContent='2. '+currentMeal;
+ const cats=['Todos',...new Set(foods.map(f=>f.cat))];
+ $('filters').innerHTML=cats.map((c,i)=>`<button class="filter ${i===0?'on':''}" onclick="filterFoods('${c}',this)">${c}</button>`).join('');
+ drawFoods('Todos');renderChips();
+}
+function filterFoods(cat,el){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('on'));el.classList.add('on');drawFoods(cat)}
+function drawFoods(cat){const arr=cat==='Todos'?foods:foods.filter(f=>f.cat===cat);$('foodgrid').innerHTML=arr.map((f,i)=>`<button class="food" onclick="addFood(${foods.indexOf(f)})"><div class="pic">${f.e}</div><b>${f.n}</b><small>${f.p}<br><strong>${f.g} g de açúcares</strong></small></button>`).join('')}
+function addFood(i){selected.push({...foods[i],meal:currentMeal});renderChips()}
+function renderChips(){$('chips').innerHTML=selected.length?selected.map((f,i)=>`<span class="chip">${f.e} ${f.n} · ${f.g}g <button style="border:0;background:none;cursor:pointer" onclick="removeFood(${i})">×</button></span>`).join(''):'<span class="muted">Nenhuma escolha ainda.</span>'}
+function removeFood(i){selected.splice(i,1);renderChips()}
+function renderResult(){
+ total=selected.reduce((s,f)=>s+f.g,0);$('total').textContent=total+' g';$('spoons').textContent=(total/4).toFixed(1)+' colheres de chá';
+ $('ring').style.setProperty('--pct',Math.min(100,total/80*100)+'%');
+ $('resultMsg').textContent=total<25?'Seu total ficou baixo neste exemplo. Observe também a qualidade e a variedade da alimentação.':total<50?'Seu total já soma uma quantidade importante. Veja quais escolhas contribuíram mais.':'As escolhas açucaradas somaram bastante. Que tal testar uma troca no próximo desafio?';
+ const counts={};selected.forEach(f=>counts[f.n]=(counts[f.n]||0)+f.g);const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ $('ranking').innerHTML=top.length?top.map((x,i)=>`<div class="rank"><b>${i+1}º</b><span style="width:125px">${x[0]}</span><div class="rankbar"><i style="width:${Math.min(100,x[1]/Math.max(1,total)*100)}%"></i></div><b>${x[1]}g</b></div>`).join(''):'<span class="muted">Nenhum alimento escolhido.</span>';
+}
+const swapData=[
+ ['🥤','Refrigerante comum','35','💧','Água','0'],
+ ['🧋','Chá gelado adoçado','18','🍵','Chá sem açúcar','0'],
+ ['🥛','Achocolatado','16','🥛','Leite + fruta','8'],
+ ['🍪','Biscoito recheado','12','🍓','Morangos','5'],
+ ['🍫','Chocolate','18','🍌','Banana','14'],
+ ['🍰','Bolo','18','🍓','Iogurte natural + fruta','8']
+];
+function renderSwaps(){
+ $('swaps').innerHTML=swapData.map((s,i)=>`<div class="swap card"><div class="swapbox"><b>${s[0]} ${s[1]}</b><small>${s[2]} g</small></div><div>→</div><button class="swapbox" onclick="applySwap(${i})"><b>${s[3]} ${s[4]}</b><small>${s[5]} g · trocar</small></button></div>`).join('');
+ $('after').textContent=total+' g';$('saving').textContent='Escolha uma troca para comparar.';
+}
+function applySwap(i){const s=swapData[i];const before=Number(s[2]),after=Number(s[5]);let newTotal=Math.max(0,total-before+after);$('after').textContent=newTotal+' g';$('saving').textContent=`Você reduziria aproximadamente ${before-after} g nesta troca.`}
+function restart(){selected=[];currentMeal='';total=0;go(1)}
+renderMeals();
+</script>
+</body></html>
