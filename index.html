@@ -50,8 +50,9 @@ h2{margin:8px 0}.muted{color:var(--muted);font-size:14px}.meal-grid{display:grid
 </section>
 
 <section id="s5" class="screen">
-<div class="card"><h2>🎯 Desafio: Troque e compare</h2><p class="muted">Escolha uma troca. O jogo recalcula o total usando valores educativos aproximados.</p><div id="swaps"></div></div>
+<div class="card"><h2>🎯 Desafio: Troque e compare</h2><p class="muted">Escolha uma troca. Os valores são estimativas por porção e servem para fins educativos. A troca busca reduzir principalmente açúcares adicionados.</p><div id="swaps"></div></div>
 <div class="card" id="swapResult"><h3>Seu resultado</h3><div class="big" id="after">0 g</div><p class="muted" id="saving"></p></div>
+<div class="card"><h2>🥗 Outras ideias para melhorar a refeição</h2><p class="muted">Estas sugestões ajudam a pensar na qualidade da refeição. Elas não entram na conta de redução de açúcar, porque o objetivo é diferente.</p><div id="mealSwaps"></div></div>
 <div class="success">💡 A ideia não é “proibir” alimentos. É perceber quais escolhas têm mais açúcar e conhecer alternativas para fazer escolhas conscientes.</div>
 <div class="footer"><button class="btn secondary" onclick="go(4)">← Resultado</button><button class="btn green" onclick="restart()">Jogar novamente</button></div>
 </section>
@@ -60,10 +61,10 @@ h2{margin:8px 0}.muted{color:var(--muted);font-size:14px}.meal-grid{display:grid
 <script>
 const foods=[
 {cat:'Bebidas',e:'🥤',n:'Refrigerante comum',g:35,p:'1 lata (350 ml)'},{cat:'Bebidas',e:'🧃',n:'Suco de caixinha',g:20,p:'1 copo (200 ml)'},{cat:'Bebidas',e:'🥤',n:'Refrigerante zero',g:0,p:'1 lata'},{cat:'Bebidas',e:'🧋',n:'Chá gelado adoçado',g:18,p:'1 copo'},{cat:'Bebidas',e:'⚡',n:'Energético',g:27,p:'1 lata'},{cat:'Bebidas',e:'☕',n:'Café com açúcar',g:10,p:'1 xícara + 2 colheres'},{cat:'Bebidas',e:'☕',n:'Café sem açúcar',g:0,p:'1 xícara'},{cat:'Bebidas',e:'🥛',n:'Achocolatado',g:16,p:'1 copo'},{cat:'Bebidas',e:'🥛',n:'Leite integral',g:10,p:'1 copo*'},{cat:'Bebidas',e:'🍊',n:'Suco de laranja natural',g:18,p:'1 copo*'},
-{cat:'Café da manhã',e:'🥣',n:'Cereal açucarado',g:10,p:'1 porção'},{cat:'Café da manhã',e:'🥛',n:'Iogurte saborizado',g:15,p:'1 pote'},{cat:'Café da manhã',e:'🥐',n:'Croissant',g:5,p:'1 unidade'},{cat:'Café da manhã',e:'🍞',n:'Pão francês',g:2,p:'1 unidade*'},{cat:'Café da manhã',e:'🍞',n:'Pão de forma',g:2,p:'2 fatias*'},{cat:'Café da manhã',e:'🍞',n:'Pão de queijo',g:1,p:'3 unidades*'},{cat:'Café da manhã',e:'🥞',n:'Panqueca com calda',g:12,p:'2 unidades'},{cat:'Café da manhã',e:'🍯',n:'Mel',g:17,p:'1 colher de sopa'},{cat:'Café da manhã',e:'🧀',n:'Queijo',g:0,p:'1 fatia*'},{cat:'Café da manhã',e:'🥚',n:'Ovo mexido',g:0,p:'1 unidade*'},{cat:'Café da manhã',e:'🥑',n:'Abacate',g:0,p:'1/2 unidade*'},{cat:'Café da manhã',e:'🥖',n:'Tapioca com queijo',g:1,p:'1 unidade*'},{cat:'Café da manhã',e:'🌽',n:'Cuscuz',g:1,p:'1 porção*'},{cat:'Café da manhã',e:'🥛',n:'Vitamina de banana sem açúcar',g:14,p:'1 copo*'}, 
+{cat:'Café da manhã',e:'🥣',n:'Cereal açucarado',g:10,p:'1 porção'},{cat:'Café da manhã',e:'🥛',n:'Iogurte saborizado',g:15,p:'1 pote'},{cat:'Café da manhã',e:'🥐',n:'Croissant',g:5,p:'1 unidade'},{cat:'Café da manhã',e:'🍞',n:'Pão francês',g:2,p:'1 unidade*'},{cat:'Café da manhã',e:'🍞',n:'Pão de forma',g:2,p:'2 fatias*'},{cat:'Café da manhã',e:'🌾',n:'Pão integral',g:2,p:'2 fatias*'},{cat:'Café da manhã',e:'🍳',n:'Pão com ovo',g:2,p:'1 unidade*'},{cat:'Café da manhã',e:'🥪',n:'Pão com queijo',g:2,p:'1 unidade*'},{cat:'Café da manhã',e:'🍞',n:'Pão de queijo',g:1,p:'3 unidades*'},{cat:'Café da manhã',e:'🥞',n:'Panqueca com calda',g:12,p:'2 unidades'},{cat:'Café da manhã',e:'🥞',n:'Tapioca com ovo',g:1,p:'1 unidade*'},{cat:'Café da manhã',e:'🥞',n:'Tapioca com frango',g:1,p:'1 unidade*'},{cat:'Café da manhã',e:'🌽',n:'Cuscuz com ovo',g:1,p:'1 porção*'},{cat:'Café da manhã',e:'🥣',n:'Mingau de aveia',g:5,p:'1 tigela*'},{cat:'Café da manhã',e:'🍓',n:'Iogurte natural com fruta',g:8,p:'1 pote + fruta*'},{cat:'Café da manhã',e:'🍌',n:'Banana com aveia',g:15,p:'1 porção*'},{cat:'Café da manhã',e:'🥣',n:'Granola',g:8,p:'2 colheres de sopa*'},{cat:'Café da manhã',e:'🍯',n:'Mel',g:17,p:'1 colher de sopa'},{cat:'Café da manhã',e:'🧀',n:'Queijo',g:0,p:'1 fatia*'},{cat:'Café da manhã',e:'🥚',n:'Ovo mexido',g:0,p:'1 unidade*'},{cat:'Café da manhã',e:'🥑',n:'Abacate',g:0,p:'1/2 unidade*'},{cat:'Café da manhã',e:'🥖',n:'Tapioca com queijo',g:1,p:'1 unidade*'},{cat:'Café da manhã',e:'🌽',n:'Cuscuz',g:1,p:'1 porção*'},{cat:'Café da manhã',e:'🥛',n:'Vitamina de banana sem açúcar',g:14,p:'1 copo*'}, 
 {cat:'Lanches',e:'🍪',n:'Biscoito recheado',g:12,p:'3 unidades'},{cat:'Lanches',e:'🍪',n:'Biscoito doce',g:8,p:'4 unidades'},{cat:'Lanches',e:'🍫',n:'Chocolate',g:18,p:'1 barra pequena'},{cat:'Lanches',e:'🍩',n:'Donut',g:20,p:'1 unidade'},{cat:'Lanches',e:'🧁',n:'Cupcake',g:22,p:'1 unidade'},{cat:'Lanches',e:'🍰',n:'Fatia de bolo',g:18,p:'1 fatia'},{cat:'Lanches',e:'🍬',n:'Balas',g:10,p:'5 unidades'},{cat:'Lanches',e:'🍭',n:'Pirulito',g:8,p:'1 unidade'},{cat:'Lanches',e:'🍦',n:'Sorvete',g:15,p:'2 bolas'},{cat:'Lanches',e:'🍿',n:'Pipoca caramelizada',g:14,p:'1 porção'},{cat:'Lanches',e:'🥜',n:'Pasta de amendoim adoçada',g:4,p:'1 colher de sopa'},
 {cat:'Frutas',e:'🍌',n:'Banana',g:14,p:'1 unidade*'},{cat:'Frutas',e:'🍎',n:'Maçã',g:19,p:'1 unidade*'},{cat:'Frutas',e:'🍊',n:'Laranja',g:12,p:'1 unidade*'},{cat:'Frutas',e:'🍇',n:'Uva',g:16,p:'1 cacho pequeno*'},{cat:'Frutas',e:'🍉',n:'Melancia',g:17,p:'2 fatias*'},{cat:'Frutas',e:'🍓',n:'Morangos',g:5,p:'1 xícara*'},{cat:'Frutas',e:'🥭',n:'Manga',g:23,p:'1/2 unidade*'},{cat:'Frutas',e:'🍍',n:'Abacaxi',g:10,p:'2 fatias*'},
-{cat:'Almoço/Jantar',e:'🍅',n:'Ketchup',g:4,p:'1 colher de sopa'},{cat:'Almoço/Jantar',e:'🍚',n:'Arroz',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🫘',n:'Feijão',g:0,p:'1 concha*'},{cat:'Almoço/Jantar',e:'🥩',n:'Carne bovina grelhada',g:0,p:'1 bife*'},{cat:'Almoço/Jantar',e:'🍗',n:'Frango grelhado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🐟',n:'Peixe assado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🥚',n:'Ovo cozido',g:0,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🥗',n:'Salada sem molho pronto',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥦',n:'Brócolis',g:1,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥕',n:'Legumes cozidos',g:4,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍠',n:'Batata-doce',g:7,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥔',n:'Purê de batata',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍝',n:'Macarrão ao molho',g:5,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🍲',n:'Sopa de legumes',g:4,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🥘',n:'Escondidinho de carne',g:4,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍛',n:'Strogonoff',g:5,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥞',n:'Panqueca de carne',g:4,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🌮',n:'Taco',g:3,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🍔',n:'Hambúrguer',g:6,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍕',n:'Pizza',g:3,p:'2 fatias*'},{cat:'Almoço/Jantar',e:'🥪',n:'Sanduíche natural',g:3,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍟',n:'Batata frita',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🌭',n:'Cachorro-quente',g:8,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🥣',n:'Farofa',g:1,p:'2 colheres*'},
+{cat:'Almoço/Jantar',e:'🍅',n:'Ketchup',g:4,p:'1 colher de sopa'},{cat:'Almoço/Jantar',e:'🍚',n:'Arroz',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍚',n:'Arroz integral',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🫘',n:'Feijão',g:0,p:'1 concha*'},{cat:'Almoço/Jantar',e:'🫘',n:'Feijão-preto',g:0,p:'1 concha*'},{cat:'Almoço/Jantar',e:'🥣',n:'Lentilha',g:1,p:'1 concha*'},{cat:'Almoço/Jantar',e:'🥩',n:'Carne bovina grelhada',g:0,p:'1 bife*'},{cat:'Almoço/Jantar',e:'🥩',n:'Bife acebolado',g:1,p:'1 bife*'},{cat:'Almoço/Jantar',e:'🥩',n:'Carne moída',g:1,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🐖',n:'Carne de porco grelhada',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🐖',n:'Carne suína assada',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🌭',n:'Linguiça',g:1,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍗',n:'Frango grelhado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🍗',n:'Frango assado',g:0,p:'1 pedaço*'},{cat:'Almoço/Jantar',e:'🍗',n:'Frango desfiado',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🐟',n:'Peixe assado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🐟',n:'Peixe grelhado',g:0,p:'1 filé*'},{cat:'Almoço/Jantar',e:'🥚',n:'Ovo cozido',g:0,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🍳',n:'Omelete',g:1,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🥗',n:'Salada sem molho pronto',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥦',n:'Brócolis',g:1,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥕',n:'Legumes cozidos',g:4,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍠',n:'Batata-doce',g:7,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥔',n:'Batata assada',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥔',n:'Purê de batata',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥔',n:'Mandioca cozida',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🫓',n:'Polenta',g:1,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥔',n:'Purê de mandioca',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍝',n:'Macarrão ao molho',g:5,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🍝',n:'Macarrão alho e óleo',g:1,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🍲',n:'Sopa de legumes',g:4,p:'1 prato*'},{cat:'Almoço/Jantar',e:'🥘',n:'Escondidinho de carne',g:4,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍛',n:'Strogonoff',g:5,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍳',n:'Arroz carreteiro',g:1,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍚',n:'Risoto',g:2,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🥞',n:'Panqueca de carne',g:4,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🌮',n:'Taco',g:3,p:'2 unidades*'},{cat:'Almoço/Jantar',e:'🍝',n:'Lasanha',g:5,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🍔',n:'Hambúrguer',g:6,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍕',n:'Pizza',g:3,p:'2 fatias*'},{cat:'Almoço/Jantar',e:'🥪',n:'Sanduíche natural',g:3,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🍟',n:'Batata frita',g:0,p:'1 porção*'},{cat:'Almoço/Jantar',e:'🌭',n:'Cachorro-quente',g:8,p:'1 unidade*'},{cat:'Almoço/Jantar',e:'🥣',n:'Farofa',g:1,p:'2 colheres*'},
 {cat:'Sobremesas',e:'🍮',n:'Pudim',g:20,p:'1 fatia'},{cat:'Sobremesas',e:'🍨',n:'Açaí com xarope',g:30,p:'1 tigela pequena'},{cat:'Sobremesas',e:'🍫',n:'Brigadeiro',g:8,p:'1 unidade'},{cat:'Sobremesas',e:'🍪',n:'Cookie com gotas de chocolate',g:12,p:'1 unidade'},{cat:'Sobremesas',e:'🍓',n:'Iogurte natural + fruta',g:8,p:'1 pote + fruta*'}
 ];
 const meals=[['☕','Café da manhã'],['🍎','Lanche da manhã'],['🍽️','Almoço'],['🍪','Lanche da tarde'],['🌙','Jantar'],['🍨','Ceia / sobremesa']];
@@ -71,7 +72,7 @@ let currentMeal='', selected=[], total=0, swapsApplied=[];
 function $(id){return document.getElementById(id)}
 function go(n){
  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('s'+n).classList.add('active');$('progress').textContent=n+'/5';
- if(n===2)renderMeals(); if(n===3)renderFoods(); if(n===4)renderResult(); if(n===5)renderSwaps(); window.scrollTo({top:0,behavior:'smooth'});
+ if(n===2)renderMeals(); if(n===3)renderFoods(); if(n===4)renderResult(); if(n===5){renderSwaps();renderMealSwaps();} window.scrollTo({top:0,behavior:'smooth'});
 }
 function renderMeals(){
  $('meals').innerHTML=meals.map(m=>`<button class="meal ${currentMeal===m[1]?'selected':''}" onclick="selectMeal('${m[1]}')"><span>${m[0]}</span>${m[1]}</button>`).join('');
@@ -84,7 +85,7 @@ function renderFoods(){
  drawFoods('Todos');renderChips();
 }
 function filterFoods(cat,el){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('on'));el.classList.add('on');drawFoods(cat)}
-function drawFoods(cat){const arr=cat==='Todos'?foods:foods.filter(f=>f.cat===cat);$('foodgrid').innerHTML=arr.map((f,i)=>`<button class="food" onclick="addFood(${foods.indexOf(f)})"><div class="pic">${f.e}</div><b>${f.n}</b><small>${f.p}<br><strong>${f.g} g de açúcares</strong></small></button>`).join('')}
+function drawFoods(cat){const arr=cat==='Todos'?foods:foods.filter(f=>f.cat===cat);$('foodgrid').innerHTML=arr.map((f,i)=>`<button class="food" onclick="addFood(${foods.indexOf(f)})"><div class="pic">${f.e}</div><b>${f.n}</b><small>${f.p}<br><strong>${f.g} g de açúcares (estimativa)</strong></small></button>`).join('')}
 function addFood(i){selected.push({...foods[i],meal:currentMeal});renderChips()}
 function renderChips(){$('chips').innerHTML=selected.length?selected.map((f,i)=>`<span class="chip">${f.e} ${f.n} · ${f.g}g <button style="border:0;background:none;cursor:pointer" onclick="removeFood(${i})">×</button></span>`).join(''):'<span class="muted">Nenhuma escolha ainda.</span>'}
 function removeFood(i){selected.splice(i,1);renderChips()}
@@ -96,19 +97,115 @@ function renderResult(){
  $('ranking').innerHTML=top.length?top.map((x,i)=>`<div class="rank"><b>${i+1}º</b><span style="width:125px">${x[0]}</span><div class="rankbar"><i style="width:${Math.min(100,x[1]/Math.max(1,total)*100)}%"></i></div><b>${x[1]}g</b></div>`).join(''):'<span class="muted">Nenhum alimento escolhido.</span>';
 }
 const swapData=[
- ['🥤','Refrigerante comum','35','💧','Água','0'],
- ['🧋','Chá gelado adoçado','18','🍵','Chá sem açúcar','0'],
- ['🥛','Achocolatado','16','🥛','Leite + fruta','8'],
- ['🍪','Biscoito recheado','12','🍓','Morangos','5'],
- ['🍫','Chocolate','18','🍌','Banana','14'],
- ['🍰','Bolo','18','🍓','Iogurte natural + fruta','8']
+ ['🥤','Refrigerante comum','35','💧','Água com gás + limão','0'],
+ ['🥤','Refrigerante comum','35','💧','Água gelada com rodelas de fruta','0'],
+ ['🧃','Suco de caixinha','20','🍊','Uma laranja inteira','9'],
+ ['🧃','Suco de caixinha','20','💧','Água com rodelas de laranja','0'],
+ ['🧋','Chá gelado adoçado','18','🍵','Chá sem açúcar + limão','0'],
+ ['🧋','Chá gelado adoçado','18','🧊','Chá gelado caseiro sem açúcar','0'],
+ ['⚡','Energético','27','💧','Água gelada','0'],
+ ['⚡','Energético','27','🥤','Água com gás + limão','0'],
+ ['☕','Café com açúcar','10','☕','Café sem açúcar','0'],
+ ['☕','Café com açúcar','10','☕','Café com menos açúcar','5'],
+ ['🥛','Achocolatado','16','🥛','Leite + cacau em pó sem açúcar','2'],
+ ['🥛','Achocolatado','16','🥛','Leite com metade do achocolatado','8'],
+ ['🍊','Suco de laranja natural','18','🍊','Laranja inteira','9'],
+ ['🍊','Suco de laranja natural','18','💧','Água + uma porção de fruta inteira','9'],
+ ['🥣','Cereal açucarado','10','🥣','Aveia + canela','1'],
+ ['🥣','Cereal açucarado','10','🥣','Aveia + morangos','5'],
+ ['🥛','Iogurte saborizado','15','🥛','Iogurte natural sem açúcar','5'],
+ ['🥛','Iogurte saborizado','15','🍌','Iogurte natural + banana em rodelas','12'],
+ ['🥐','Croissant','5','🍞','Pão integral + queijo','1'],
+ ['🥐','Croissant','5','🥚','Pão + ovo mexido','2'],
+ ['🥞','Panqueca com calda','12','🥞','Panqueca com canela, sem calda','2'],
+ ['🥞','Panqueca com calda','12','🍌','Panqueca de banana e aveia sem calda','5'],
+ ['🍯','Mel','17','🍌','Banana amassada com canela','12'],
+ ['🍯','Mel','17','🍓','Morangos picados','5'],
+ ['🥛','Vitamina de banana sem açúcar','14','🍌','Banana inteira com aveia','15'],
+ ['🥛','Vitamina de banana sem açúcar','14','🥛','Vitamina com água, sem açúcar adicionado','12'],
+ ['🍪','Biscoito recheado','12','🍌','Banana com canela','12'],
+ ['🍪','Biscoito recheado','12','🥜','Castanhas sem açúcar (pequena porção)','1'],
+ ['🍪','Biscoito doce','8','🍎','Maçã em pedaços com canela','10'],
+ ['🍪','Biscoito doce','8','🥜','Castanhas sem açúcar (pequena porção)','1'],
+ ['🍫','Chocolate','18','🍫','Uma porção menor de chocolate','9'],
+ ['🍫','Chocolate','18','🍌','Banana com canela','12'],
+ ['🍩','Donut','20','🥞','Panqueca de banana e aveia sem calda','5'],
+ ['🍩','Donut','20','🍎','Maçã com canela','10'],
+ ['🧁','Cupcake','22','🍰','Uma fatia pequena de bolo simples','12'],
+ ['🧁','Cupcake','22','🍌','Banana com canela','12'],
+ ['🍰','Fatia de bolo','18','🍰','Uma fatia menor de bolo','9'],
+ ['🍰','Fatia de bolo','18','🍎','Maçã com canela','10'],
+ ['🍬','Balas','10','🍓','Morangos frescos','5'],
+ ['🍬','Balas','10','🍬','Consumir uma quantidade menor de balas','5'],
+ ['🍭','Pirulito','8','🍊','Uma mexerica ou laranja','12'],
+ ['🍭','Pirulito','8','🍓','Morangos frescos','5'],
+ ['🍦','Sorvete','15','🍦','Uma porção menor de sorvete','8'],
+ ['🍦','Sorvete','15','🍌','Banana congelada batida sem açúcar','12'],
+ ['🍿','Pipoca caramelizada','14','🍿','Pipoca caseira sem caramelo','0'],
+ ['🍿','Pipoca caramelizada','14','🍿','Pipoca com canela, sem açúcar','0'],
+ ['🍮','Pudim','20','🍮','Uma porção menor de pudim','10'],
+ ['🍮','Pudim','20','🍓','Morangos frescos','5'],
+ ['🍨','Açaí com xarope','30','🍨','Açaí sem xarope','5'],
+ ['🍨','Açaí com xarope','30','🍌','Açaí sem xarope + banana em porção moderada','12'],
+ ['🍫','Brigadeiro','8','🍫','Um brigadeiro menor','4'],
+ ['🍫','Brigadeiro','8','🍓','Morangos frescos','5'],
+ ['🍪','Cookie com gotas de chocolate','12','🍪','Um cookie menor','6'],
+ ['🍪','Cookie com gotas de chocolate','12','🍌','Banana com canela','12']
 ];
 function renderSwaps(){
- $('swaps').innerHTML=swapData.map((s,i)=>`<div class="swap card"><div class="swapbox"><b>${s[0]} ${s[1]}</b><small>${s[2]} g</small></div><div>→</div><button class="swapbox" onclick="applySwap(${i})"><b>${s[3]} ${s[4]}</b><small>${s[5]} g · trocar</small></button></div>`).join('');
- $('after').textContent=total+' g';$('saving').textContent='Escolha uma troca para comparar.';
+ const chosenNames=new Set(selected.map(f=>f.n));
+ const availableNames=[...new Set(swapData.filter(s=>chosenNames.has(s[1])).map(s=>s[1]))];
+ $('swaps').innerHTML=availableNames.length?availableNames.map(name=>{
+   const options=swapData.map((s,i)=>({s,i})).filter(x=>x.s[1]===name);
+   const original=options[0].s;
+   return `<div class="card" style="margin:10px 0"><div class="swapbox"><b>${original[0]} ${name}</b><small>${original[2]} g de açúcar (estimativa)</small></div><p class="muted">Escolha uma alternativa:</p><div class="foodgrid">${options.map(({s,i})=>{
+     const applied=swapsApplied.includes(i);
+     return `<button class="food" style="text-align:left;${applied?'border:2px solid #23845b;background:#eaf8f0':''}" onclick="applySwap(${i})"><div class="pic">${s[3]}</div><b>${s[4]}</b><small>${s[5]} g · ${applied?'✓ escolhida':'açúcar estimado'}</small></button>`;
+   }).join('')}</div></div>`;
+ }).join(''):'<div class="card"><p><b>Nenhuma das suas escolhas tem uma troca cadastrada ainda.</b></p><p class="muted">Volte em “Alterar escolhas” para escolher outro alimento e testar uma troca.</p></div>';
+ updateSwapTotal();
 }
-function applySwap(i){const s=swapData[i];const before=Number(s[2]),after=Number(s[5]);let newTotal=Math.max(0,total-before+after);$('after').textContent=newTotal+' g';$('saving').textContent=`Você reduziria aproximadamente ${before-after} g nesta troca.`}
-function restart(){selected=[];currentMeal='';total=0;go(1)}
+const mealSwapData = {
+ 'Pizza': ['🍕','Pizza','Experimente uma pizza caseira com molho de tomate, vegetais e menos embutidos.'],
+ 'Lasanha': ['🍝','Lasanha','Uma opção é preparar em casa com molho de tomate, legumes e uma quantidade moderada de queijo.'],
+ 'Hambúrguer': ['🍔','Hambúrguer','Experimente um hambúrguer caseiro com carne, salada e um molho simples.'],
+ 'Batata frita': ['🍟','Batata frita','Você pode experimentar batata assada com ervas, usando menos óleo.'],
+ 'Cachorro-quente': ['🌭','Cachorro-quente','Uma alternativa é preparar em casa, acrescentando vegetais e moderando os molhos e embutidos.'],
+ 'Strogonoff': ['🍲','Strogonoff','Experimente preparar em casa e servir com salada ou legumes, ajustando os ingredientes ao seu gosto.'],
+ 'Frango empanado': ['🍗','Frango empanado','Você pode testar frango assado ou preparado na air fryer, com uma camada mais fina de empanado.'],
+ 'Macarrão ao molho': ['🍝','Macarrão ao molho','Experimente molho caseiro de tomate e acrescente legumes à preparação.'],
+ 'Linguiça': ['🌭','Linguiça','Você pode variar algumas refeições com frango, peixe, ovos ou feijão, sem precisar excluir a linguiça.'],
+ 'Pipoca caramelizada': ['🍿','Pipoca caramelizada','Para uma opção com menos açúcar adicionado, experimente pipoca sem caramelo.']
+};
+function renderMealSwaps(){
+ const chosen = [...new Set(selected.map(f=>f.n))];
+ const matches = chosen.filter(n=>mealSwapData[n]);
+ $('mealSwaps').innerHTML = matches.length ? matches.map(n=>{
+   const s=mealSwapData[n];
+   return `<div class="card" style="margin:10px 0"><b>${s[0]} ${s[1]}</b><p class="muted">${s[2]}</p></div>`;
+ }).join('') : '<p class="muted">Quando você escolher pizza, lasanha ou outros pratos com sugestões cadastradas, as ideias para melhorar a refeição aparecerão aqui.</p>';
+}
+
+function updateSwapTotal(){
+ let reduction=0;
+ swapsApplied.forEach(i=>{const s=swapData[i]; reduction += Math.max(0,Number(s[2])-Number(s[5]));});
+ const newTotal=Math.max(0,total-reduction);
+ $('after').textContent=newTotal+' g';
+ $('saving').textContent=swapsApplied.length
+   ? `Você reduziu aproximadamente ${reduction} g de açúcar no total. Antes: ${total} g → Depois: ${newTotal} g.`
+   : 'Escolha uma ou mais trocas para ver a redução total do dia.';
+}
+function applySwap(i){
+ const foodName=swapData[i][1];
+ const pos=swapsApplied.indexOf(i);
+ if(pos>=0) swapsApplied.splice(pos,1);
+ else {
+   swapsApplied=swapsApplied.filter(oldIndex=>swapData[oldIndex][1]!==foodName);
+   swapsApplied.push(i);
+ }
+ renderSwaps();
+}
+function restart(){selected=[];currentMeal='';total=0;swapsApplied=[];go(1)}
 renderMeals();
 </script>
 </body></html>
